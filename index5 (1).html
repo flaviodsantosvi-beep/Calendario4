@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Calendário Lunar de Pesca | Previsão Diária</title>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    background: #0a0f1e;
+    color: #eef5ff;
+}
+
+header {
+    text-align: center;
+    padding: 1.2rem 0.8rem;
+    background: linear-gradient(135deg, #0b3b5f, #1e6f5c);
+    font-size: 1.6rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    border-bottom: 2px solid #ffcd7e;
+}
+
+.sub {
+    font-size: 0.85rem;
+    font-weight: normal;
+    opacity: 0.85;
+    margin-top: 6px;
+}
+
+.calendar {
+    padding: 12px 14px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.month {
+    margin-bottom: 28px;
+    border-radius: 20px;
+    background: rgba(30, 35, 48, 0.85);
+    backdrop-filter: blur(2px);
+    padding: 12px 10px 16px 10px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+    transition: transform 0.1s ease;
+    border: 1px solid #2c3e44;
+}
+
+.month h2 {
+    text-align: center;
+    margin: 0 0 12px 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+    background: linear-gradient(120deg, #f9d56e, #ffb347);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: 1px;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    gap: 4px;
+}
+
+.day-name {
+    font-weight: bold;
+    color: #c7e9ff;
+    background: #1f2a3e;
+    padding: 8px 3px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.day {
+    background: #1e2a32;
+    padding: 8px 4px;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.1s linear;
+    cursor: default;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.day > div:first-child {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+small {
+    font-size: 0.7rem;
+    font-weight: 500;
+    margin-top: 3px;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 5px;
+    border-radius: 30px;
+    display: inline-block;
+}
+
+/* classes de pesca */
+.good-fishing {
+    background: linear-gradient(145deg, #1b5e2a, #0f4c1f);
+    border-bottom: 3px solid #b9f6ca;
+    color: #ffffff;
+    text-shadow: 0 1px 1px black;
+}
+
+.normal-fishing {
+    background: linear-gradient(145deg, #d4a017, #b47c00);
+    color: #1f1b0c;
+    border-bottom: 3px solid #ffea9e;
+}
+
+.bad-fishing {
+    background: linear-gradient(145deg, #4a5568, #2d3748);
+    border-bottom: 3px solid #a0aec0;
+    color: #e2e8f0;
+}
+
+.holiday {
+    background: radial-gradient(circle at 20% 30%, #b91c1c, #7f1a1a);
+    border-bottom: 3px solid #ffb4a2;
+    color: #fff3e0;
+    position: relative;
+}
+
+.holiday::after {
+    content: "🎉";
+    font-size: 0.6rem;
+    position: absolute;
+    top: -2px;
+    right: 2px;
+    opacity: 0.9;
+}
+
+.today {
+    border: 2px solid #ffde9c;
+    box-shadow: 0 0 0 1px #ffb347, 0 0 0 3px #2c2c2c;
+    font-weight: bold;
+    transform: scale(0.98);
+}
+
+/* legenda */
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    background: #10161f;
+    padding: 14px 16px;
+    margin: 10px 12px 20px 12px;
+    border-radius: 48px;
+    font-size: 0.8rem;
+    border: 1px solid #2e4a62;
+}
+
+.legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend .color-box {
+    width: 24px;
+    height: 24px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 0.75rem;
+    color: #9aaec0;
+    border-top: 1px solid #2c3e44;
+    margin-top: 20px;
+}
+
+@media (max-width: 580px) {
+    .day {
+        padding: 5px 2px;
+    }
+    small {
+        font-size: 0.6rem;
+    }
+    .month h2 {
+        font-size: 1.3rem;
+    }
+    .days {
+        gap: 2px;
+    }
+    .day-name {
+        font-size: 0.7rem;
+        padding: 5px 1px;
+    }
+    .legend {
+        gap: 10px;
+        font-size: 0.7rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<header>
+    🌙 Calendário Lunar & Pesca 🎣
+    <div class="sub">Melhores dias com base nas fases da lua</div>
+</header>
+
+<div class="legend">
+    <span><div class="color-box" style="background: #1b5e2a;"></div> 🐟 Excelente (Cheia/Nova)</span>
+    <span><div class="color-box" style="background: #d4a017;"></div> 🎣 Regular (Crescente/Minguante)</span>
+    <span><div class="color-box" style="background: #4a5568;"></div> ⚠️ Desfavorável (Gibosas)</span>
+    <span><div class="color-box" style="background: #b91c1c;"></div> 📅 Feriado Nacional</span>
+    <span><div class="color-box" style="border:2px solid #ffde9c; background:#1e2a32;"></div> 🔆 Hoje</span>
+</div>
+
+<div class="calendar" id="calendar"></div>
+<div class="footer">
+    🌕 Base científica: fases lunares influenciam comportamento dos peixes | 🗓️ Ano atual completo<br>
+    ⚡ Lua Cheia & Nova = pico de atividade alimentar | Quartos = movimento moderado | Gibosas = baixa atividade
+</div>
+
+<script>
+(function() {
+    // meses e dias
+    const months = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+    const daysWeek = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+    // Feriados nacionais fixos + pontos facultativos principais (Brasil)
+    // Formato "dia-mes" (sem zero à esquerda, mas vamos converter)
+    const holidays = {
+        "1-1": "Ano Novo",
+        "21-4": "Tiradentes",
+        "1-5": "Dia do Trabalho",
+        "7-9": "Independência",
+        "12-10": "N. Sra. Aparecida",
+        "2-11": "Finados",
+        "15-11": "República",
+        "25-12": "Natal"
+    };
+    
+    // Carnaval e Corpus Christi são moveis, mas manteremos apenas fixos para simplicidade e precisão
+    // Acrescentar um feriado extra opcional: 20/11 (Consciência Negra - alguns estados, mas deixaremos como bônus)
+    // Incluir 20 de Novembro - Dia da Consciência Negra (nacional desde 2024? mas já é feriado em muitos locais)
+    // Vamos adicionar como referência cultural
+    const extendedHolidays = {
+        "20-11": "Consciência Negra"
+    };
+    const allHolidays = { ...holidays, ...extendedHolidays };
+    
+    // Cálculo astronômico preciso da fase lunar
+    // Algoritmo baseado no ciclo sinódico lunar médio (29.5305888531 dias)
+    // Referência: data da Lua Nova conhecida (1 de Janeiro de 2000 foi Lua Nova às 18:14 UTC)
+    // Ajustado para maior exatidão visual e consistência entre meses
+    function getAccurateMoonPhase(date) {
+        // Data de referência: Lua Nova em 6 de Janeiro de 2000 às 18:14 UTC (timestamp)
+        // Para simplificar e manter no fuso local do navegador, usaremos um algoritmo robusto.
+        // Fórmula: (JulianDay - referenceNewMoon) / synodicPeriod -> pegar fração
+        
+        // Função auxiliar para JD (dias julianos aproximados para precisão ok)
+        function toJulianDay(dt) {
+            const year = dt.getFullYear();
+            const month = dt.getMonth() + 1;
+            const day = dt.getDate();
+            const a = Math.floor((14 - month) / 12);
+            const y = year + 4800 - a;
+            const m = month + 12 * a - 3;
+            let jd = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+            // Adicionar fração do dia (hora UTC -> ajustamos pelo fuso? Para simplificar usaremos meio-dia UTC-3? 
+            // Mas a fase lunar não muda significativamente; vamos usar UTC+0 para referência)
+            const utc = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds());
+            const msInDay = 86400000;
+            const fractionalDay = (utc - Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate(), 0,0,0)) / msInDay;
+            return jd + fractionalDay;
+        }
+        
+        // Lua Nova de referência: 6 de janeiro de 2000 às 18:14 UTC (JD = 2451549.843)
+        const knownNewMoonJD = 2451549.843; // JD para 2000-01-06 18:14 UTC
+        const synodicMonth = 29.5305888531;
+        
+        const currentJD = toJulianDay(date);
+        let phaseDays = (currentJD - knownNewMoonJD) % synodicMonth;
+        if (phaseDays < 0) phaseDays += synodicMonth;
+        
+        // índice de 0 a 7 (8 fases principais)
+        const phaseIndex = Math.floor((phaseDays / synodicMonth) * 8);
+        // Mapeamento mais rico para exibição e pesca
+        const phasesMap = [
+            { name: "🌑 Nova", type: "good" },        // 0 - Nova
+            { name: "🌒 Crescente", type: "normal" },  // 1 - Crescente fina
+            { name: "🌓 Quarto Cres.", type: "normal" },  // 2
+            { name: "🌔 Gibosa Cres.", type: "bad" },     // 3
+            { name: "🌕 Cheia", type: "good" },           // 4 - Cheia
+            { name: "🌖 Gibosa Ming.", type: "bad" },      // 5
+            { name: "🌗 Quarto Ming.", type: "normal" },   // 6
+            { name: "🌘 Minguante", type: "normal" }       // 7
+        ];
+        
+        let idx = phaseIndex % 8;
+        return phasesMap[idx];
+    }
+    
+    // qualidade da pesca baseada no tipo da fase
+    function getFishingClass(phaseObj) {
+        if (phaseObj.type === "good") return "good-fishing";
+        if (phaseObj.type === "normal") return "normal-fishing";
+        return "bad-fishing";
+    }
+    
+    // texto curto da fase para exibir (sem emoji para legibilidade)
+    function getShortPhaseName(phaseObj) {
+        // remove emojis para deixar mais compacto, mas mantém simbologia suave
+        let raw = phaseObj.name;
+        return raw.replace(/[🌑🌒🌓🌔🌕🌖🌗🌘]/g, '').trim();
+    }
+    
+    // verifica feriado
+    function isHoliday(day, month) {
+        const key = `${day}-${month}`;
+        return allHolidays.hasOwnProperty(key);
+    }
+    
+    // função principal para gerar o calendário do ano corrente
+    function createCalendar() {
+        const calendarContainer = document.getElementById("calendar");
+        if (!calendarContainer) return;
+        calendarContainer.innerHTML = "";
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        
+        for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
+            const monthDiv = document.createElement("div");
+            monthDiv.className = "month";
+            
+            const title = document.createElement("h2");
+            title.innerText = `${months[monthIndex]} ${currentYear}`;
+            monthDiv.appendChild(title);
+            
+            const daysGrid = document.createElement("div");
+            daysGrid.className = "days";
+            
+            // cabeçalho dias da semana
+            for (let w = 0; w < daysWeek.length; w++) {
+                const dayNameCell = document.createElement("div");
+                dayNameCell.className = "day-name";
+                dayNameCell.innerText = daysWeek[w];
+                daysGrid.appendChild(dayNameCell);
+            }
+            
+            // primeiro dia do mês
+            const firstDate = new Date(currentYear, monthIndex, 1);
+            let startWeekDay = firstDate.getDay(); // 0 = domingo
+            
+            // células vazias antes do dia 1
+            for (let i = 0; i < startWeekDay; i++) {
+                const emptyCell = document.createElement("div");
+                emptyCell.style.background = "transparent";
+                emptyCell.style.boxShadow = "none";
+                emptyCell.style.minHeight = "62px";
+                daysGrid.appendChild(emptyCell);
+            }
+            
+            // dias do mês
+            const daysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(currentYear, monthIndex, d);
+                const dayCell = document.createElement("div");
+                dayCell.className = "day";
+                
+                // obter fase lunar para esta data específica
+                const moonPhaseData = getAccurateMoonPhase(dateObj);
+                const fishingClass = getFishingClass(moonPhaseData);
+                const phaseShort = getShortPhaseName(moonPhaseData);
+                
+                dayCell.classList.add(fishingClass);
+                
+                // marca feriado
+                const monthNum = monthIndex + 1;
+                if (isHoliday(d, monthNum)) {
+                    dayCell.classList.add("holiday");
+                }
+                
+                // destaca dia atual
+                if (dateObj.toDateString() === today.toDateString()) {
+                    dayCell.classList.add("today");
+                }
+                
+                // ícone extra opcional para melhor visual pesca
+                let fishingIcon = "";
+                if (fishingClass === "good-fishing") fishingIcon = "🐟 ";
+                else if (fishingClass === "normal-fishing") fishingIcon = "🎣 ";
+                else fishingIcon = "⛔ ";
+                
+                // monta conteúdo com número e fase (sem redundância pesada)
+                // exibe também descrição curta da lua
+                dayCell.innerHTML = `
+                    <div>${d}</div>
+                    <small>${phaseShort}</small>
+                `;
+                
+                // Adiciona um pequeno tooltip para informar sobre a qualidade da pesca
+                let tooltipText = "";
+                if (fishingClass === "good-fishing") tooltipText = "Ótimo para pesca! 🌕🌑 Atividade intensa.";
+                else if (fishingClass === "normal-fishing") tooltipText = "Pesca moderada. Bom movimento.";
+                else tooltipText = "Baixa atividade dos peixes. Prefira outros dias.";
+                
+                if (isHoliday(d, monthNum)) {
+                    tooltipText += ` (${allHolidays[`${d}-${monthNum}`]})`;
+                }
+                dayCell.title = tooltipText;
+                
+                daysGrid.appendChild(dayCell);
+            }
+            
+            // preencher espaços restantes para manter grid alinhado (opcional, mas mantém harmonia)
+            const totalCells = daysGrid.children.length;
+            const remaining = 42 - totalCells; // 6 linhas * 7 = 42 células ideal
+            if (remaining > 0 && remaining < 7) {
+                for (let r = 0; r < remaining; r++) {
+                    const blank = document.createElement("div");
+                    blank.style.background = "transparent";
+                    blank.style.minHeight = "62px";
+                    daysGrid.appendChild(blank);
+                }
+            }
+            
+            monthDiv.appendChild(daysGrid);
+            calendarContainer.appendChild(monthDiv);
+        }
+    }
+    
+    // executar criação
+    createCalendar();
+    
+    // pequena melhoria: ajustar responsivo para manter tooltips em mobile (nativo funciona)
+    // adicional: caso queira recarregar ano atual sempre que mudar ano? o script já pega ano atual
+    // Adicionar função de atualização se necessário mas não há requisito de troca de ano
+})();
+</script>
+</body>
+</html>
